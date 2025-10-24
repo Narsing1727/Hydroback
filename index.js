@@ -32,6 +32,6 @@ app.use("/uploads" , express.static("uploads"));
 app.use("/api/v1/hydrosphere/ai",aIRouter );
 app.use("/api/v1/hydrosphere/risk" , riskRouter)
 dbConnect();
-app.listen(5000, "0.0.0.0" , () =>
+app.listen(PORT, "0.0.0.0" , () =>
   console.log("🌐 Backend running on http://localhost:5000")
 );
