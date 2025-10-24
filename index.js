@@ -9,7 +9,7 @@ const postRouter = require("./routes/postRoutes");
 const feedRouter = require("./routes/feedRoutes");
 const aIRouter = require("./routes/aIRoutes");
 const riskRouter = require("./routes/riskRoutes");
-
+const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
