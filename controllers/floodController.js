@@ -3,7 +3,7 @@ const { GoogleAuth } = require("google-auth-library");
 const { readFileSync } = require("fs");
 
 
-const PRIVATE_KEY = JSON.parse(readFileSync("gee-key.json", "utf8"));
+const PRIVATE_KEY = JSON.parse(process.env.GEE_KEY_JSON);
 
 const auth = new GoogleAuth({
   credentials: PRIVATE_KEY,
