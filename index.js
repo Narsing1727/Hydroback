@@ -22,7 +22,9 @@ app.use(
   })
 );
 
-
+app.get("/", (req, res) => {
+  res.send("🌊 Hydroback server deployed successfully on Railway!");
+});
 
 app.use("/api/v1/hydrosphere", floodRouter);
 app.use("/api/v1/hydrosphere/auth" , authRouter);
