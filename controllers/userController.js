@@ -345,7 +345,7 @@ exports.ForgotPassword = async (req, res) => {
       message: "Temporary password sent to your email!",
     });
   } catch (error) {
-    console.error("Forgot password error:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+  console.error("Forgot password error:", error.message);
+  res.status(500).json({ success: false, message: error.message });
   }
 };
