@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookie());
 app.use(
   cors({
-    origin: "http://localhost:5174", 
+    origin: "https://hydrosphere-2.vercel.app/", 
     credentials: true, 
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
