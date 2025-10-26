@@ -4,7 +4,7 @@ const hash = require("bcryptjs");
 const User = require("../models/User");
 const nodemailer = require("nodemailer");
 const TempUser  = require("../models/TempUser");
-import { Resend } from "resend";
+const {Resend} = require("resend");
 
 console.log("Email function type:", typeof sendVerificationEmail);
 
