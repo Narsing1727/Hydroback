@@ -25,6 +25,22 @@ app.use(
 app.get("/", (req, res) => {
   res.send("🌊 Hydroback server deployed successfully on Railway!");
 });
+app.get("/test-email", async (req, res) => {
+  try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const data = await resend.emails.send({
+      from: "HydroSphere <onboarding@resend.dev>",
+      to: "newtongaming36@gmail.com",
+      subject: "✅ HydroSphere Test Email",
+      html: "<p>This is a test email from Resend — it works!</p>",
+    });
+    console.log("Resend data:", data);
+    res.json(data);
+  } catch (e) {
+    console.error("Test email error:", e);
+    res.status(500).send(e.message);
+  }
+});
 
 app.use("/api/v1/hydrosphere", floodRouter);
 app.use("/api/v1/hydrosphere/auth" , authRouter);
