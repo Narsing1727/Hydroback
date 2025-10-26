@@ -240,6 +240,7 @@ exports.ResendOTP = async (req, res) => {
 };
 exports.SendOTP = async (req, res) => {
   try {
+    console.log("🟢 Received SendOTP request body:", req.body);
     const { email } = req.body;
 
     if (!email)
