@@ -240,7 +240,7 @@ exports.ResendOTP = async (req, res) => {
 };
 exports.SendOTP = async (req, res) => {
   try {
-    console.log("🟢 Received SendOTP request body:", req.body);
+    
     const { email } = req.body;
 
     if (!email)
@@ -266,7 +266,7 @@ exports.SendOTP = async (req, res) => {
       { upsert: true, new: true }
     );
 
- console.log("🚀 Sending OTP email via Resend...");
+
 
 
      
@@ -286,10 +286,10 @@ exports.SendOTP = async (req, res) => {
       `,
     });
 
-console.log("✅ Reached SendOTP function");
+
 console.log("Email received from frontend:", email);
 
-
+console.log("📩 Resend response:", JSON.stringify(response, null, 2));
     res.status(200).json({
       success: true,
       message: "OTP sent successfully to your email!",
