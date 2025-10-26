@@ -322,7 +322,7 @@ exports.ForgotPassword = async (req, res) => {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     await resend.emails.send({
-      from: "HydroSphere <noreply@hydrosphere.app>", 
+     from: "HydroSphere <onboarding@resend.dev>", 
       to: email,
       subject: "HydroSphere - Temporary Password",
       html: `
