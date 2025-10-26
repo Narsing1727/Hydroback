@@ -265,24 +265,28 @@ exports.SendOTP = async (req, res) => {
       { upsert: true, new: true }
     );
 
- 
+ console.log("🚀 Sending OTP email via Resend...");
+
 
      
-    const resend = new Resend(process.env.RESEND_API_KEY);
+       const resend = new Resend(process.env.RESEND_API_KEY);
 
     await resend.emails.send({
-     from: "HydroSphere <onboarding@resend.dev>", 
+      from: "HydroSphere <onboarding@resend.dev>",
       to: email,
-      subject: "HydroSphere - Temporary Password",
+      subject: "HydroSphere - Your OTP Code",
       html: `
-        <h3>Hello ,</h3>
-        <p>You requested a password reset. Here’s your new temporary password:</p>
-        <h2>just tell case</h2>
-        <p>Please log in with this password and change it immediately.</p>
+        <h3>HydroSphere Email Verification</h3>
+        <p>Your One-Time Password (OTP) for verification is:</p>
+        <h2>${otp}</h2>
+        <p>This OTP will expire in 5 minutes.</p>
         <br/>
-        <p>— HydroSphere Security Team</p>
+        <p>— HydroSphere Team</p>
       `,
     });
+
+console.log("✅ Reached SendOTP function");
+console.log("Email received from frontend:", email);
 
 
     res.status(200).json({
