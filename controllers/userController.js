@@ -4,7 +4,7 @@ const hash = require("bcryptjs");
 const User = require("../models/User");
 const nodemailer = require("nodemailer");
 const TempUser  = require("../models/TempUser");
-
+import { Resend } from "resend";
 
 console.log("Email function type:", typeof sendVerificationEmail);
 
@@ -298,6 +298,8 @@ exports.SendOTP = async (req, res) => {
   }
 };
 
+
+
 exports.ForgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -311,30 +313,23 @@ exports.ForgotPassword = async (req, res) => {
 
     const tempPassword = Math.random().toString(36).slice(-8);
 
-
     const genSalt = await hash.genSalt(10);
     const hashedTemp = await hash.hash(tempPassword, genSalt);
     user.password = hashedTemp;
     await user.save();
 
- 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.SMTP_EMAIL,
-        pass: process.env.SMTP_PASSWORD,
-      },
-    });
+    
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
-    await transporter.sendMail({
-      from: `"HydroSphere" <${process.env.SMTP_EMAIL}>`,
+    await resend.emails.send({
+      from: "HydroSphere <noreply@hydrosphere.app>", 
       to: email,
       subject: "HydroSphere - Temporary Password",
       html: `
         <h3>Hello ${user.username},</h3>
-        <p>You requested your password. Here’s your new temporary password:</p>
+        <p>You requested a password reset. Here’s your new temporary password:</p>
         <h2>${tempPassword}</h2>
-        <p>Please login using this password and change it from your profile settings.</p>
+        <p>Please log in with this password and change it immediately.</p>
         <br/>
         <p>— HydroSphere Security Team</p>
       `,
@@ -342,10 +337,10 @@ exports.ForgotPassword = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Temporary password sent to your email!",
+      message: "Temporary password sent successfully via Resend!",
     });
   } catch (error) {
-  console.error("Forgot password error:", error.message);
-  res.status(500).json({ success: false, message: error.message });
+    console.error("Forgot password error:", error.message);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
