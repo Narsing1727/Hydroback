@@ -265,26 +265,25 @@ exports.SendOTP = async (req, res) => {
       { upsert: true, new: true }
     );
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.SMTP_EMAIL,
-        pass: process.env.SMTP_PASSWORD,
-      },
-    });
+ 
 
+     
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
-    await transporter.sendMail({
-      from: `"HydroSphere" <${process.env.SMTP_EMAIL}>`,
+    await resend.emails.send({
+     from: "HydroSphere <onboarding@resend.dev>", 
       to: email,
-      subject: "Your HydroSphere OTP Code",
+      subject: "HydroSphere - Temporary Password",
       html: `
-        <h3>HydroSphere Email Verification</h3>
-        <p>Your OTP for verification is:</p>
-        <h2>${otp}</h2>
-        <p>This OTP will expire in 5 minutes.</p>
+        <h3>Hello ,</h3>
+        <p>You requested a password reset. Here’s your new temporary password:</p>
+        <h2>just tell case</h2>
+        <p>Please log in with this password and change it immediately.</p>
+        <br/>
+        <p>— HydroSphere Security Team</p>
       `,
     });
+
 
     res.status(200).json({
       success: true,
