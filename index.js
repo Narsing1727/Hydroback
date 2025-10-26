@@ -9,6 +9,7 @@ const postRouter = require("./routes/postRoutes");
 const feedRouter = require("./routes/feedRoutes");
 const aIRouter = require("./routes/aIRoutes");
 const riskRouter = require("./routes/riskRoutes");
+const { Resend } = require("resend");
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
