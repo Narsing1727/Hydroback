@@ -10,6 +10,7 @@ const feedRouter = require("./routes/feedRoutes");
 const aIRouter = require("./routes/aIRoutes");
 const riskRouter = require("./routes/riskRoutes");
 const { Resend } = require("resend");
+const nodemailer = require("nodemailer");
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
@@ -23,25 +24,36 @@ app.use(
   })
 );
 
-app.get("/", (req, res) => {
-  res.send("🌊 Hydroback server deployed successfully on Railway!");
-});
 app.get("/test-email", async (req, res) => {
   try {
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const data = await resend.emails.send({
-      from: "HydroSphere <onboarding@resend.dev>",
-      to: "newtongaming36@gmail.com",
-      subject: "✅ HydroSphere Test Email",
-      html: "<p>This is a test email from Resend — it works!</p>",
+  
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.SMTP_EMAIL,
+        pass: process.env.SMTP_PASSWORD,
+      },
     });
-    console.log("Resend data:", data);
-    res.json(data);
-  } catch (e) {
-    console.error("Test email error:", e);
-    res.status(500).send(e.message);
+
+    // email details
+    const mailOptions = {
+      from: `"HydroSphere Test" <${process.env.SMTP_EMAIL}>`,
+      to: "newtongaming36@gmail.com", // you can put your own email to verify
+      subject: "✅ HydroSphere Test Email",
+      text: "This is a test email from your Railway backend using Gmail SMTP.",
+    };
+
+    // send mail
+    await transporter.sendMail(mailOptions);
+
+    console.log("✅ Test email sent successfully!");
+    res.status(200).json({ success: true, message: "Test email sent successfully!" });
+  } catch (error) {
+    console.error("❌ Test email failed:", error);
+    res.status(500).json({ success: false, message: "Test email failed", error: error.message });
   }
 });
+
 
 app.use("/api/v1/hydrosphere", floodRouter);
 app.use("/api/v1/hydrosphere/auth" , authRouter);

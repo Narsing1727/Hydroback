@@ -273,7 +273,7 @@ exports.SendOTP = async (req, res) => {
        const resend = new Resend(process.env.RESEND_API_KEY);
 
     const response = await resend.emails.send({
-     from: "onboarding@resend.dev",
+     from: "HydroSphere <noreply@hydrosphere.tech>",
       to: email,
       subject: "HydroSphere - Your OTP Code",
       html: `
