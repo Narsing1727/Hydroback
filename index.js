@@ -10,6 +10,7 @@ const feedRouter = require("./routes/feedRoutes");
 const aIRouter = require("./routes/aIRoutes");
 const riskRouter = require("./routes/riskRoutes");
 const { Resend } = require("resend");
+const { MailerSend, EmailParams, Sender, Recipient } = require("mailersend");
 const nodemailer = require("nodemailer");
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
@@ -24,36 +25,31 @@ app.use(
   })
 );
 
+
 app.get("/test-email", async (req, res) => {
   try {
-  
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.SMTP_EMAIL,
-        pass: process.env.SMTP_PASSWORD,
-      },
+    const mailersend = new MailerSend({
+      apiKey: process.env.MAILERSEND_API_KEY,
     });
 
-    // email details
-    const mailOptions = {
-      from: `"HydroSphere Test" <${process.env.SMTP_EMAIL}>`,
-      to: "newtongaming36@gmail.com", // you can put your own email to verify
-      subject: "✅ HydroSphere Test Email",
-      text: "This is a test email from your Railway backend using Gmail SMTP.",
-    };
+    const sentFrom = new Sender("noreply@mailersend.net", "HydroSphere");
+    const recipients = [new Recipient("newtongaming36@gmail.com", "Newton")];
 
-    // send mail
-    await transporter.sendMail(mailOptions);
+    const emailParams = new EmailParams()
+      .setFrom(sentFrom)
+      .setTo(recipients)
+      .setSubject("✅ HydroSphere MailerSend Test Email")
+      .setHtml("<h2>Success!</h2><p>Your MailerSend setup on Railway works perfectly 🚀</p>");
 
-    console.log("✅ Test email sent successfully!");
+    await mailersend.email.send(emailParams);
+
+    console.log("✅ Test email sent successfully via MailerSend!");
     res.status(200).json({ success: true, message: "Test email sent successfully!" });
   } catch (error) {
-    console.error("❌ Test email failed:", error);
-    res.status(500).json({ success: false, message: "Test email failed", error: error.message });
+    console.error("❌ MailerSend test error:", error);
+    res.status(500).json({ success: false, message: "Failed to send test email", error: error.message });
   }
 });
-
 
 app.use("/api/v1/hydrosphere", floodRouter);
 app.use("/api/v1/hydrosphere/auth" , authRouter);
