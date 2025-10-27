@@ -26,31 +26,28 @@ app.use(
 );
 
 
-app.get("/test-email", async (req, res) => {
+app.get("/test-elastic", async (req, res) => {
   try {
-    const mailersend = new MailerSend({
-      apiKey: process.env.MAILERSEND_API_KEY,
+    const response = await axios.post("https://api.elasticemail.com/v2/email/send", null, {
+      params: {
+        apikey: process.env.ELASTIC_API_KEY,
+        subject: "✅ HydroSphere - Elastic Email Test",
+        from: "newtongaming36@gmail.com",  // your Gmail (sender)
+        to: "newtongaming36@gmail.com",    // your Gmail (recipient)
+        bodyHtml: `
+          <h2>Hello from HydroSphere 🚀</h2>
+          <p>This is a test email sent via Elastic Email API from Railway.</p>
+        `,
+      },
     });
 
-    const sentFrom = new Sender("noreply@mailersend.net", "HydroSphere");
-    const recipients = [new Recipient("newtongaming36@gmail.com", "Newton")];
-
-    const emailParams = new EmailParams()
-      .setFrom(sentFrom)
-      .setTo(recipients)
-      .setSubject("✅ HydroSphere MailerSend Test Email")
-      .setHtml("<h2>Success!</h2><p>Your MailerSend setup on Railway works perfectly 🚀</p>");
-
-    await mailersend.email.send(emailParams);
-
-    console.log("✅ Test email sent successfully via MailerSend!");
-    res.status(200).json({ success: true, message: "Test email sent successfully!" });
+    console.log("✅ Elastic Email sent:", response.data);
+    res.status(200).json({ success: true, message: "Email sent successfully!" });
   } catch (error) {
-    console.error("❌ MailerSend test error:", error);
-    res.status(500).json({ success: false, message: "Failed to send test email", error: error.message });
+    console.error("❌ Elastic Email Error:", error.response?.data || error.message);
+    res.status(500).json({ success: false, message: "Email failed", error: error.message });
   }
 });
-
 app.use("/api/v1/hydrosphere", floodRouter);
 app.use("/api/v1/hydrosphere/auth" , authRouter);
 app.use("/api/v1/hydrosphere/post" , postRouter);
