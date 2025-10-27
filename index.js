@@ -12,6 +12,7 @@ const riskRouter = require("./routes/riskRoutes");
 const { Resend } = require("resend");
 const { MailerSend, EmailParams, Sender, Recipient } = require("mailersend");
 const nodemailer = require("nodemailer");
+const axios = require("axios")
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
@@ -33,7 +34,7 @@ app.get("/test-elastic", async (req, res) => {
         apikey: process.env.ELASTIC_API_KEY,
         subject: "✅ HydroSphere - Elastic Email Test",
         from: "newtongaming36@gmail.com",  // your Gmail (sender)
-        to: "newtongaming36@gmail.com",    // your Gmail (recipient)
+        to: "narsing_s@ce.iitr.ac.in",    // your Gmail (recipient)
         bodyHtml: `
           <h2>Hello from HydroSphere 🚀</h2>
           <p>This is a test email sent via Elastic Email API from Railway.</p>
