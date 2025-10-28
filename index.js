@@ -13,6 +13,7 @@ const { Resend } = require("resend");
 const { MailerSend, EmailParams, Sender, Recipient } = require("mailersend");
 const nodemailer = require("nodemailer");
 const axios = require("axios")
+const sgMail = require("@sendgrid/mail")
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
