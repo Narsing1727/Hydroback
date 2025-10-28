@@ -27,7 +27,7 @@ app.use(
 );
 
 
-import nodemailer from "nodemailer";
+
 
 const transporter = nodemailer.createTransport({
   host: "smtp.resend.com",
