@@ -27,26 +27,35 @@ app.use(
 );
 
 
-app.get("/test-elastic", async (req, res) => {
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.SMTP_EMAIL, // Your email
+    pass: process.env.SMTP_PASSWORD, // App password (NOT normal Gmail password)
+  },
+});
+
+// ✅ Test Email Route
+app.get("/send-test", async (req, res) => {
   try {
-    const response = await axios.post("https://api.elasticemail.com/v2/email/send", null, {
-      params: {
-        apikey: process.env.ELASTIC_API_KEY,
-        subject: "✅ HydroSphere - Elastic Email Test",
-        from: "newtongaming36@gmail.com",  // your Gmail (sender)
-        to: "narsing_s@ce.iitr.ac.in",    // your Gmail (recipient)
-        bodyHtml: `
-          <h2>Hello from HydroSphere 🚀</h2>
-          <p>This is a test email sent via Elastic Email API from Railway.</p>
-        `,
-      },
+    const info = await transporter.sendMail({
+      from: process.env.SMTP_EMAIL,
+      to: "narsing_s@ce.iitr.ac.in", 
+      subject: "✅ Nodemailer Test Email on Render",
+      text: "If you received this, congratsss 🎉 SMTP is working on Render!",
     });
 
-    console.log("✅ Elastic Email sent:", response.data);
-    res.status(200).json({ success: true, message: "Email sent successfully!" });
+    res.status(200).json({
+      success: true,
+      message: "Email sent successfully!",
+      info,
+    });
   } catch (error) {
-    console.error("❌ Elastic Email Error:", error.response?.data || error.message);
-    res.status(500).json({ success: false, message: "Email failed", error: error.message });
+    console.error("Email Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 });
 app.use("/api/v1/hydrosphere", floodRouter);
