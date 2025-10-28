@@ -28,31 +28,41 @@ app.use(
 
 
 
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.resend.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: "resend",
-    pass: process.env.RESEND_API_KEY,
-  },
-});
 
-// ✅ Test Email Route
-app.get("/test-email", async (req, res) => {
+app.get("/sendgrid-test", async (req, res) => {
   try {
-    const info = await transporter.sendMail({
-      from: "Hydro App <noreply@resend.dev>",
-      to:  "gamingnewton69@gmail.com",
-      subject: "Hydro App Email Test ✅",
-      text: "If you received this, your email system is fully working ✅",
-    });
+    const msg = {
+      to: "gamingnewton69@gmail.com",  // your test inbox
+      from: {
+        email: "newtongaming36@gmail.com", // newtongaming36@gmail.com
+        name: "Hydrosphere Alerts",
+      },
+      subject: "✅ Hydrosphere Email Test via SendGrid",
+      text: "If you're reading this, your SendGrid email system is LIVE! ✅",
+      html: `
+        <div style="font-family:sans-serif;line-height:1.5">
+          <h2>✅ Email Working!</h2>
+          <p>Your Render backend successfully sent this email using SendGrid.</p>
+          <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+        </div>
+      `,
+    };
 
-    res.json({ success: true, info });
+    const [response] = await sgMail.send(msg);
+    res.json({
+      success: true,
+      statusCode: response?.statusCode,
+      messageId: response?.headers?.["x-message-id"],
+    });
   } catch (err) {
-    console.error("Email Error:", err);
-    res.status(500).json({ success: false, error: err.message });
+    console.error("SendGrid Error:", err?.response?.body || err.message);
+    res.status(500).json({
+      success: false,
+      error: err.message,
+      details: err?.response?.body || null,
+    });
   }
 });
 app.use("/api/v1/hydrosphere", floodRouter);
