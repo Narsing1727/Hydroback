@@ -27,35 +27,32 @@ app.use(
 );
 
 
+import nodemailer from "nodemailer";
+
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.resend.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.SMTP_EMAIL, // Your email
-    pass: process.env.SMTP_PASSWORD, // App password (NOT normal Gmail password)
+    user: "resend",
+    pass: process.env.RESEND_API_KEY,
   },
 });
 
 // ✅ Test Email Route
-app.get("/send-test", async (req, res) => {
+app.get("/test-email", async (req, res) => {
   try {
     const info = await transporter.sendMail({
-      from: process.env.SMTP_EMAIL,
-      to: "narsing_s@ce.iitr.ac.in", 
-      subject: "✅ Nodemailer Test Email on Render",
-      text: "If you received this, congratsss 🎉 SMTP is working on Render!",
+      from: "Hydro App <noreply@resend.dev>",
+      to:  "gamingnewton69@gmail.com",
+      subject: "Hydro App Email Test ✅",
+      text: "If you received this, your email system is fully working ✅",
     });
 
-    res.status(200).json({
-      success: true,
-      message: "Email sent successfully!",
-      info,
-    });
-  } catch (error) {
-    console.error("Email Error:", error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.json({ success: true, info });
+  } catch (err) {
+    console.error("Email Error:", err);
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 app.use("/api/v1/hydrosphere", floodRouter);
