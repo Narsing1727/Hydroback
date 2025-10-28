@@ -35,7 +35,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 app.get("/sendgrid-test", async (_req, res) => {
   try {
     const to = "gamingnewton69@gmail.com";                  // inbox you’re testing
-    const fromEmail = process.env.SENDER_EMAIL;             // newtongaming36@gmail.com
+    const fromEmail = "newtongaming36@gmal.com";             // newtongaming36@gmail.com
 
     const msg = {
       to,
