@@ -32,38 +32,41 @@ app.use(
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 
-app.get("/sendgrid-test", async (req, res) => {
+app.get("/sendgrid-test", async (_req, res) => {
   try {
+    const to = "gamingnewton69@gmail.com";                  // inbox you’re testing
+    const fromEmail = process.env.SENDER_EMAIL;             // newtongaming36@gmail.com
+
     const msg = {
-      to: "gamingnewton69@gmail.com",  // your test inbox
-      from: {
-        email: "newtongaming36@gmail.com", // newtongaming36@gmail.com
-        name: "Hydrosphere Alerts",
+      to,
+      from: { email: fromEmail, name: "Hydrosphere" },
+      replyTo: fromEmail,
+      subject: "Hydrosphere verification test",
+      text: "Hi, this is a simple transactional test from Hydrosphere.",
+      html: `<p>Hi, this is a simple transactional test from <strong>Hydrosphere</strong>.</p>`,
+
+      // Turn OFF tracking (important for inboxing)
+      trackingSettings: {
+        clickTracking: { enable: false, enableText: false },
+        openTracking: { enable: false },
       },
-      subject: "✅ Hydrosphere Email Test via SendGrid",
-      text: "If you're reading this, your SendGrid email system is LIVE! ✅",
-      html: `
-        <div style="font-family:sans-serif;line-height:1.5">
-          <h2>✅ Email Working!</h2>
-          <p>Your Render backend successfully sent this email using SendGrid.</p>
-          <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
-        </div>
-      `,
+
+      // Optional but good: let Gmail know how to unsubscribe
+      headers: {
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        "List-Unsubscribe": "<mailto:unsubscribe@example.com>, <https://example.com/unsub>",
+      },
     };
 
-    const [response] = await sgMail.send(msg);
+    const [resp] = await sgMail.send(msg);
     res.json({
-      success: true,
-      statusCode: response?.statusCode,
-      messageId: response?.headers?.["x-message-id"],
+      ok: true,
+      status: resp?.statusCode,
+      id: resp?.headers?.["x-message-id"] || null,
     });
-  } catch (err) {
-    console.error("SendGrid Error:", err?.response?.body || err.message);
-    res.status(500).json({
-      success: false,
-      error: err.message,
-      details: err?.response?.body || null,
-    });
+  } catch (e) {
+    console.error(e?.response?.body || e);
+    res.status(500).json({ ok: false, error: e.message, details: e?.response?.body || null });
   }
 });
 app.use("/api/v1/hydrosphere", floodRouter);
