@@ -354,7 +354,8 @@ console.log("BODY:", req.body);
       ok: true,
       status: resp?.statusCode,
       id: resp?.headers?.["x-message-id"] || null,
-      success : true
+      success : true,
+      message : "New Password Sent Check Your Spam/Inbox"
     });
   
   } catch (error) {
