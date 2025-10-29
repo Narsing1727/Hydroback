@@ -21,7 +21,8 @@ try{
       html: 
       `
       <p><strong>Email:</strong> ${email}</p>
-      <p><strong>UserName:</strong> ${username}</p>
+      <p><strong>Username:</strong> ${username}</p>
+      <p><strong>Rating:</strong> ${rating}}</p>
       <p><strong>Message:</strong> ${message}</p>`
       ,
 
