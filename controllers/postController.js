@@ -14,6 +14,8 @@ exports.getAllPost = async (req, res) => {
 }
 exports.addPost = async (req , res) => {
     try {
+        console.log("HEADERS:", req.headers);
+
         const userid = req.id;
         const {title , description} = req.body;
         if(!title || !description){
