@@ -217,22 +217,41 @@ exports.ResendOTP = async (req, res) => {
     user.otpExpires = Date.now() + 5 * 60 * 1000;
     await user.save();
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.SMTP_EMAIL,
-        pass: process.env.SMTP_PASSWORD,
+    
+ const to = email;              
+    const fromEmail = "newtongaming36@gmail.com";          
+
+    const msg = {
+      to,
+      from: { email: fromEmail, name: `IITR STUDENT` },
+      replyTo: fromEmail,
+      subject: "HydroSphere New OTP",
+      text: `Hi user`,
+      html: 
+      `<p><strong>New OTP:</strong> ${otp}</p>`
+      ,
+
+     
+      trackingSettings: {
+        clickTracking: { enable: false, enableText: false },
+        openTracking: { enable: false },
       },
-    });
 
-    await transporter.sendMail({
-      from: `"HydroSphere" <${process.env.SMTP_EMAIL}>`,
-      to: email,
-      subject: "Your new HydroSphere OTP Code",
-      html: `<h2>${otp}</h2><p>Use this OTP within 5 minutes.</p>`,
-    });
+      
+      headers: {
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        "List-Unsubscribe": "<mailto:unsubscribe@example.com>, <https://example.com/unsub>",
+      },
+    };
 
-    res.status(200).json({ success: true, message: "New OTP sent to email" });
+    const [resp] = await sgMail.send(msg);
+    res.json({
+      ok: true,
+      status: resp?.statusCode,
+      id: resp?.headers?.["x-message-id"] || null,
+      success : true,
+      message : "New Password Sent Check Your Spam/Inbox"
+    });
   } catch (error) {
     console.log("Resend OTP error:", error);
     res.status(500).json({ success: false, message: "Server error" });
@@ -268,31 +287,39 @@ exports.SendOTP = async (req, res) => {
 
 
 
+ const to = email;              
+    const fromEmail = "newtongaming36@gmail.com";          
+
+    const msg = {
+      to,
+      from: { email: fromEmail, name: "IITR STUDENT" },
+      replyTo: fromEmail,
+      subject: "HydroSphere Otp",
+      text: `Hello User`,
+      html: 
+      `<p><strong> YOUR OTP is:</strong> ${otp}</p>`
+      ,
 
      
-       const resend = new Resend(process.env.RESEND_API_KEY);
+      trackingSettings: {
+        clickTracking: { enable: false, enableText: false },
+        openTracking: { enable: false },
+      },
 
-    const response = await resend.emails.send({
-     from: "HydroSphere <noreply@hydrosphere.tech>",
-      to: email,
-      subject: "HydroSphere - Your OTP Code",
-      html: `
-        <h3>HydroSphere Email Verification</h3>
-        <p>Your One-Time Password (OTP) for verification is:</p>
-        <h2>${otp}</h2>
-        <p>This OTP will expire in 5 minutes.</p>
-        <br/>
-        <p>— HydroSphere Team</p>
-      `,
-    });
+      
+      headers: {
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        "List-Unsubscribe": "<mailto:unsubscribe@example.com>, <https://example.com/unsub>",
+      },
+    };
 
-
-console.log("Email received from frontend:", email);
-
-console.log("📩 Resend response:", JSON.stringify(response, null, 2));
-    res.status(200).json({
-      success: true,
-      message: "OTP sent successfully to your email!",
+    const [resp] = await sgMail.send(msg);
+    res.json({
+      ok: true,
+      status: resp?.statusCode,
+      id: resp?.headers?.["x-message-id"] || null,
+      success : true,
+      message : "New Password Sent Check Your Spam/Inbox"
     });
   } catch (error) {
     console.error("Send OTP error:", error);

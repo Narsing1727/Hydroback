@@ -1,6 +1,8 @@
-const nodemailer = require("nodemailer");
 
+const sgMail = require("@sendgrid/mail")
 exports.feedback = async (req , res) => {
+
+try{
 
 
   const { username, message , email , rating } = req.body;
@@ -8,35 +10,41 @@ exports.feedback = async (req , res) => {
   if (!message) {
     return res.status(400).json({ success: false, message: "Feedback cannot be empty" });
   }
+ const to = "newtongaming36@gmail.com";              
+    const fromEmail = email;          
+    const msg = {
+      to,
+      from: { email: fromEmail, name: `${username}` },
+      replyTo: fromEmail,
+      subject: "HydroSphere Feedback",
+      text: `Hi`,
+      html: 
+      `<p><strong>Message:</strong> ${message}</p>`
+      ,
 
-  try {
-    
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.FEEDBACK_EMAIL, 
-        pass: process.env.FEEDBACK_APP_PASSWORD, 
+     
+      trackingSettings: {
+        clickTracking: { enable: false, enableText: false },
+        openTracking: { enable: false },
       },
-    });
 
-    
-    const mailOptions = {
-      from: "no-reply@hydrosphere.com",
-      to: process.env.FEEDBACK_EMAIL, 
-      subject: `New Feedback from narsing`,
-      html: `
-        <h3>Hydrosphere Feedback</h3>
-        <p><b>From:</b>${username}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p><b>Rating:</b> ${rating}</p>
-        <p><b>Message:</b></p>
-        <p>${message}</p>
-      `,
+      
+      headers: {
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        "List-Unsubscribe": "<mailto:unsubscribe@example.com>, <https://example.com/unsub>",
+      },
     };
 
-    await transporter.sendMail(mailOptions);
-    res.json({ success: true, message: "Feedback sent successfully!" });
-  } catch (error) {
+    const [resp] = await sgMail.send(msg);
+    res.json({
+      ok: true,
+      status: resp?.statusCode,
+      id: resp?.headers?.["x-message-id"] || null,
+      success : true,
+      message : "New Password Sent Check Your Spam/Inbox"
+    });
+}
+   catch (error) {
     console.error("Error sending feedback:", error);
     res.status(500).json({ success: false, message: "Failed to send feedback" });
   }
