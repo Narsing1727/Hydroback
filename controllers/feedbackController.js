@@ -11,7 +11,7 @@ try{
     return res.status(400).json({ success: false, message: "Feedback cannot be empty" });
   }
  const to = "newtongaming36@gmail.com";              
-    const fromEmail = email;          
+    const fromEmail = "newtongaming36@gmail.com";          
     const msg = {
       to,
       from: { email: fromEmail, name: `${username}` },
@@ -19,7 +19,10 @@ try{
       subject: "HydroSphere Feedback",
       text: `Hi`,
       html: 
-      `<p><strong>Message:</strong> ${message}</p>`
+      `
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>UserName:</strong> ${username}</p>
+      <p><strong>Message:</strong> ${message}</p>`
       ,
 
      
