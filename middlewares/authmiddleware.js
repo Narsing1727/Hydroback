@@ -1,30 +1,28 @@
-const mongoose = require("mongoose");
 const jwt = require('jsonwebtoken');
 
-exports.IsAuth = async (req , res , next) => {
+exports.IsAuth = async (req, res, next) => {
     try {
-        console.log("Cookies received:", req.cookies);
+        console.log("AUTH HEADER:", req.headers.authorization);
 
-        const token = req.cookies.token;
-        if(!token){
-            return res.status(400).json({
-                success : false,
-                message : "Token not found"
-            })
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({
+                success: false,
+                message: "Token not found"
+            });
         }
-        const decode = await jwt.verify(token , "123456789");
-        console.log('Decoded token is : ' , decode);
-        if(!decode){
-            return res.status(400).json({
-                message : "Invalid token",
-                success : false
-            })
-        }
-        
+
+        const token = authHeader.split(" ")[1];
+        const decode = jwt.verify(token, "123456789");
+
         req.id = decode.userId;
         next();
     } catch (error) {
-        console.log(error);
-        
+        console.error("TOKEN ERROR:", error);
+        return res.status(401).json({
+            success: false,
+            message: "Invalid or expired token"
+        });
     }
 }
