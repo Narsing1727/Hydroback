@@ -104,20 +104,13 @@ const isPm = await hash.compare(password, loginUser.password);
 console.log(userData);
 console.log(req.id);
 
-    return res
-      .status(200)
-      .cookie("token", token, {
-    maxAge: 1 * 24 * 60 * 60 * 1000,
-    httpOnly: true,
-    secure: false, 
-    sameSite: "lax", 
-     path: "/",
-      })
-      .json({
-        message: `Welcome ${userData.username}`,
-        success: true,
-        userData,
-      });
+ return res.status(200).json({
+  message: `Welcome ${userData.username}`,
+  success: true,
+  token,        
+  userData
+});
+
   } catch (error) {
     console.log(error);
   }
@@ -125,10 +118,11 @@ console.log(req.id);
 
 exports.logout = (req, res) => {
   try {
-    return res.status(200).cookie("token", "", { maxAge: 0 }).json({
-      message: "Logout successfully",
-      success: true,
-    });
+   return res.status(200).json({
+  message: "Logout successfully",
+  success: true
+});
+
   } catch (error) {
     console.log(error);
   }
