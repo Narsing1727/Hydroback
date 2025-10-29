@@ -61,7 +61,7 @@ const path = require("path");
 
 exports.RudraPrayag = async (req , res) => {
       try {
-         const filePath = path.join(__dirname, "..", "data", "RudraPrayag.json");
+         const filePath = path.join(__dirname, "..", "Data", "RudraPrayag.json");
     const data = JSON.parse(
       fs.readFileSync(filePath, "utf8")
     );
