@@ -13,7 +13,7 @@ const { Resend } = require("resend");
 const { MailerSend, EmailParams, Sender, Recipient } = require("mailersend");
 const nodemailer = require("nodemailer");
 const axios = require("axios")
-const sgMail = require("@sendgrid/mail")
+
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
@@ -29,46 +29,9 @@ app.use(
 
 
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 
-app.get("/sendgrid-test", async (_req, res) => {
-  try {
-    const to = "gamingnewton69@gmail.com";                  // inbox you’re testing
-    const fromEmail = "newtongaming36@gmail.com";             // newtongaming36@gmail.com
 
-    const msg = {
-      to,
-      from: { email: fromEmail, name: "Hydrosphere" },
-      replyTo: fromEmail,
-      subject: "Hydrosphere verification test",
-      text: "Hi, this is a simple transactional test from Hydrosphere.",
-      html: `<p>Hi, this is a simple transactional test from <strong>Hydrosphere</strong>.</p>`,
-
-      // Turn OFF tracking (important for inboxing)
-      trackingSettings: {
-        clickTracking: { enable: false, enableText: false },
-        openTracking: { enable: false },
-      },
-
-      // Optional but good: let Gmail know how to unsubscribe
-      headers: {
-        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-        "List-Unsubscribe": "<mailto:unsubscribe@example.com>, <https://example.com/unsub>",
-      },
-    };
-
-    const [resp] = await sgMail.send(msg);
-    res.json({
-      ok: true,
-      status: resp?.statusCode,
-      id: resp?.headers?.["x-message-id"] || null,
-    });
-  } catch (e) {
-    console.error(e?.response?.body || e);
-    res.status(500).json({ ok: false, error: e.message, details: e?.response?.body || null });
-  }
-});
 app.use("/api/v1/hydrosphere", floodRouter);
 app.use("/api/v1/hydrosphere/auth" , authRouter);
 app.use("/api/v1/hydrosphere/post" , postRouter);

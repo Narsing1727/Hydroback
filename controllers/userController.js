@@ -5,9 +5,9 @@ const User = require("../models/User");
 const nodemailer = require("nodemailer");
 const TempUser  = require("../models/TempUser");
 const {Resend} = require("resend");
+const sgMail = require("@sendgrid/mail")
 
-console.log("Email function type:", typeof sendVerificationEmail);
-
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 exports.Signup = async (req, res) => {
    try {
     const { username, email, phoneNumber, password } = req.body;
@@ -323,26 +323,38 @@ exports.ForgotPassword = async (req, res) => {
     await user.save();
 
     
-    const resend = new Resend(process.env.RESEND_API_KEY);
+   
+    const to = email;              
+    const fromEmail = "newtongaming36@gmail.com";          
 
-    await resend.emails.send({
-     from: "HydroSphere <onboarding@resend.dev>", 
-      to: email,
-      subject: "HydroSphere - Temporary Password",
-      html: `
-        <h3>Hello ${user.username},</h3>
-        <p>You requested a password reset. Here’s your new temporary password:</p>
-        <h2>${tempPassword}</h2>
-        <p>Please log in with this password and change it immediately.</p>
-        <br/>
-        <p>— HydroSphere Security Team</p>
-      `,
-    });
+    const msg = {
+      to,
+      from: { email: fromEmail, name: "Hydrosphere" },
+      replyTo: fromEmail,
+      subject: "Hydrosphere Password Reset",
+      text: `Hi, ${user.username} this is a reset password mail from Hydrosphere.`,
+      html: `<p>Your new password is ${tempPassword}</p>`,
 
-    res.status(200).json({
-      success: true,
-      message: "Temporary password sent successfully via Resend!",
+     
+      trackingSettings: {
+        clickTracking: { enable: false, enableText: false },
+        openTracking: { enable: false },
+      },
+
+      
+      headers: {
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        "List-Unsubscribe": "<mailto:unsubscribe@example.com>, <https://example.com/unsub>",
+      },
+    };
+
+    const [resp] = await sgMail.send(msg);
+    res.json({
+      ok: true,
+      status: resp?.statusCode,
+      id: resp?.headers?.["x-message-id"] || null,
     });
+  
   } catch (error) {
     console.error("Forgot password error:", error.message);
     res.status(500).json({ success: false, message: error.message });
