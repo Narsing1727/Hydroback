@@ -1,6 +1,6 @@
 const axios = require("axios");
 const fs = require("fs");
-
+const path = require("path");
 
  exports.model = async (req, res) => {
   try {
@@ -61,8 +61,9 @@ const fs = require("fs");
 
 exports.RudraPrayag = async (req , res) => {
       try {
+         const filePath = path.join(__dirname, "..", "data", "RudraPrayag.json");
     const data = JSON.parse(
-      fs.readFileSync("./data/RudraPrayag.json", "utf8")
+      fs.readFileSync(filePath, "utf8")
     );
     res.json(data);
   } catch (err) {
