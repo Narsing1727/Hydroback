@@ -354,6 +354,7 @@ console.log("BODY:", req.body);
       ok: true,
       status: resp?.statusCode,
       id: resp?.headers?.["x-message-id"] || null,
+      success : true
     });
   
   } catch (error) {
