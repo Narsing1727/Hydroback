@@ -307,6 +307,7 @@ console.log("📩 Resend response:", JSON.stringify(response, null, 2));
 exports.ForgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
+console.log("BODY:", req.body);
 
     if (!email)
       return res.status(400).json({ success: false, message: "Email is required" });
